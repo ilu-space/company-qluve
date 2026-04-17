@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qluve – AI Companion That Talks, Listens, and Cares</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #4A90B8;
+    --primary-dark: #357a9e;
+    --primary-light: #e8f3f9;
+    --secondary: #F4A261;
+    --secondary-dark: #e08a45;
+    --dark: #1a2a35;
+    --text: #2d3e4a;
+    --muted: #6b8090;
+    --light: #f7fbfd;
+    --white: #ffffff;
+    --border: #d8eaf3;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+  }
+
+  .nav-logo span { color: var(--secondary); }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--primary); }
+
+  .nav-cta {
+    background: var(--primary);
+    color: var(--white);
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0d2233 0%, #1b3d52 40%, #2e6a8e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 2rem 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(244,162,97,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -150px; left: -150px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(74,144,184,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-inner {
+    max-width: 760px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(244,162,97,0.15);
+    border: 1px solid rgba(244,162,97,0.4);
+    color: var(--secondary);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: var(--white);
+    margin-bottom: 1.25rem;
+    letter-spacing: -1px;
+  }
+
+  .hero h1 span { color: var(--secondary); }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: rgba(255,255,255,0.75);
+    max-width: 580px;
+    margin: 0 auto 2.5rem;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+
+  .hero-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 480px;
+    margin: 0 auto 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-form input[type="email"] {
+    flex: 1;
+    min-width: 240px;
+    padding: 0.875rem 1.25rem;
+    border-radius: 50px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: var(--white);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .hero-form input[type="email"]::placeholder { color: rgba(255,255,255,0.5); }
+  .hero-form input[type="email"]:focus { border-color: var(--secondary); }
+
+  .hero-form button {
+    padding: 0.875rem 1.75rem;
+    border-radius: 50px;
+    border: none;
+    background: var(--secondary);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+
+  .hero-form button:hover { background: var(--secondary-dark); transform: translateY(-2px); }
+
+  .hero-note {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 3.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .stat { text-align: center; }
+  .stat-num {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--secondary);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 0.3rem;
+    letter-spacing: 0.3px;
+  }
+
+  /* SECTION COMMON */
+  section { padding: 100px 2rem; }
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--dark);
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+  }
+  .section-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+  .center { text-align: center; margin: 0 auto; }
+
+  /* TRUSTED BY */
+  .trusted {
+    background: var(--primary-light);
+    padding: 50px 2rem;
+    text-align: center;
+  }
+  .trusted-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .trusted-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .trusted-logo {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--primary);
+    opacity: 0.7;
+    letter-spacing: 0.5px;
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    background: var(--light);
+  }
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 3.5rem auto 0;
+  }
+  .how-step {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2.25rem 2rem;
+    border: 1px solid var(--border);
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .how-step:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(74,144,184,0.12); }
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--white);
+    font-weight: 800;
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 1.25rem;
+  }
+  .how-step h3 { font-size: 1.2rem; color: var(--dark); margin-bottom: 0.75rem; }
+  .how-step p { font-size: 0.92rem; color: var(--muted); line-height: 1.65; }
+
+  /* FEATURES */
+  .features { background: var(--white); }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.75rem;
+    max-width: 1100px;
+    margin: 3.5rem auto 0;
+  }
+  .feature-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 1.75rem;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  }
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 24px 60px rgba(74,144,184,0.1);
+    border-color: var(--primary);
+  }
+  .feature-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .feature-card h3 {
+    font-size: 1.05rem;
+    color: var(--dark);
+    margin-bottom: 0.6rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+  .feature-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+  /* SOCIAL PROOF */
+  .social-proof {
+    background: linear-gradient(135deg, #0d2233 0%, #1b3d52 100%);
+    padding: 100px 2rem;
+  }
+  .testimonials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.75rem;
+    max-width: 1000px;
+    margin: 3.5rem auto 0;
+  }
+  .testimonial {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 2rem 1.75rem;
+    transition: transform 0.3s;
+  }
+  .testimonial:hover { transform: translateY(-4px); }
+
+  .quote-mark {
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--secondary);
+    opacity: 0.6;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 0.5rem;
+  }
+  .testimonial p {
+    font-size: 0.93rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 1.25rem;
+  }
+  .testimonial-author strong {
+    display: block;
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .testimonial-author span {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* CTA BOTTOM */
+  .cta-section {
+    background: var(--light);
+    text-align: center;
+    padding: 100px 2rem;
+  }
+  .cta-box {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 28px;
+    padding: 4rem 3rem;
+    max-width: 620px;
+    margin: 0 auto;
+    box-shadow: 0 20px 60px rgba(74,144,184,0.08);
+  }
+  .cta-box .section-title { margin-bottom: 0.75rem; }
+  .cta-box .section-sub { margin: 0 auto 2rem; }
+
+  .cta-form { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+
+  .cta-form input[type="email"] {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.875rem 1.25rem;
+    border-radius: 50px;
+    border: 2px solid var(--border);
+    font-size: 0.95rem;
+    outline: none;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .cta-form input[type="email"]:focus { border-color: var(--primary); }
+
+  .cta-form button {
+    padding: 0.875rem 1.75rem;
+    border-radius: 50px;
+    border: none;
+    background: var(--primary);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+  .cta-form button:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+  .cta-sub-note {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.5);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+  footer .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  footer .footer-logo span { color: var(--secondary); }
+  footer p { margin-bottom: 0.4rem; }
+  footer a { color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: var(--secondary); }
+
+  /* WAVE */
+  .wave-divider { display: block; width: 100%; overflow: hidden; line-height: 0; }
+  .wave-divider svg { display: block; width: 100%; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav .nav-links { display: none; }
+    .hero-stats { gap: 1.5rem; }
+    .stat-num { font-size: 1.6rem; }
+    section { padding: 70px 1.25rem; }
+    .cta-box { padding: 2.5rem 1.5rem; }
+    .features-grid, .how-grid { gap: 1.25rem; }
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 2.1rem; }
+    .hero-form { flex-direction: column; align-items: stretch; }
+    .hero-form input[type="email"], .hero-form button { min-width: unset; width: 100%; border-radius: 12px; }
+    .cta-form { flex-direction: column; }
+    .cta-form input[type="email"], .cta-form button { width: 100%; border-radius: 12px; }
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-inner { animation: fadeUp 0.9s ease forwards; }
+
+  /* Pulse badge */
+  .pulse-dot {
+    width: 8px; height: 8px;
+    background: var(--secondary);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Ql<span>u</span>ve</div>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#testimonials">Stories</a></li>
+  </ul>
+  <a href="#signup" class="nav-cta">Request a Demo</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <div class="pulse-dot"></div>
+      Deployed across care homes in Finland
+    </div>
+    <h1>The AI companion that talks, listens,<br><span>and truly cares.</span></h1>
+    <p class="hero-sub">Qluve is a voice-powered AI robot that holds natural conversations with elderly and disabled residents — detecting mood changes, sending reminders, and keeping caregivers informed in real time.</p>
+    <form class="hero-form">
+      <input type="email" placeholder="Enter your work email" required>
+      <button type="submit">Request a Demo</button>
+    </form>
+    <p class="hero-note">No commitment required. Setup in days, not months.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">900+</span>
+        <div class="stat-label">Target Finnish care facilities</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">24/7</span>
+        <div class="stat-label">Always-on companionship</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">50+</span>
+        <div class="stat-label">Languages supported</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">Real-time</span>
+        <div class="stat-label">Caregiver dashboard & alerts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUSTED BY -->
+<div class="trusted">
+  <p class="trusted-label">Trusted by care providers in Finland</p>
+  <div class="trusted-logos">
+    <span class="trusted-logo">Attendo</span>
+    <span class="trusted-logo">Esperi Care</span>
+    <span class="trusted-logo">Mehiläinen</span>
+    <span class="trusted-logo">ViisSeiska</span>
+    <span class="trusted-logo">Myllykaari</span>
+    <span class="trusted-logo">Municipal Care Units</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div style="max-width:1100px; margin:0 auto;">
+    <p class="section-label center">How It Works</p>
+    <h2 class="section-title center">Care reimagined — in three steps</h2>
+    <p class="section-sub center">Qluve integrates seamlessly into your care home's daily routine without disrupting your team's workflow.</p>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <h3>Qluve Listens & Connects</h3>
+        <p>Residents speak naturally with Qluve's voice AI — sharing feelings, stories, and concerns. Sentiment analysis monitors emotional wellbeing continuously, flagging changes before they become problems.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <h3>Smart Reminders & Support</h3>
+        <p>Qluve gently reminds residents about medications, meals, and activities — reducing missed doses and boosting engagement. Family members can send voice messages directly to their loved ones through the platform.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <h3>Caregivers Stay Informed</h3>
+        <p>A real-time dashboard surfaces mood trends, wellbeing alerts, and two-way messaging so care managers can act quickly and document efficiently — saving hours each week per resident.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div style="max-width:1100px; margin:0 auto;">
+    <p class="section-label center">Growth Roadmap</p>
+    <h2 class="section-title center">Built for the future of Nordic care</h2>
+    <p class="section-sub center">From Finland's care homes to across the Nordics — Qluve's roadmap is designed for scale, depth, and clinical impact.</p>
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <span class="feature-icon">🇫🇮</span>
+        <h3>Nordic Care Home Expansion Playbook</h3>
+        <p>Target Finland's 900+ municipal care facilities and private chains (Attendo, Esperi, Mehiläinen) with a structured pilot-to-deployment program. Use existing resident testimonials and ViisSeiska/Myllykaari case studies to build trust. Aim for 50+ facilities within 12 months by aligning with municipal procurement cycles and demonstrating cost savings in caregiver time.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">👨‍👩‍👧‍👦</span>
+        <h3>Family Connection Portal</h3>
+        <p>Launch a family-facing mobile app where relatives can view mood trend summaries, receive wellbeing alerts, and send voice messages to residents through Qluve. This creates emotional value for families, gives care homes a differentiation selling point, and opens a potential B2C subscription revenue stream alongside the core B2B model.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <h3>Predictive Wellbeing Analytics</h3>
+        <p>Leverage the longitudinal mood and conversation data Qluve already collects to build predictive models that detect early signs of cognitive decline, depression, UTIs (through behavioral change), and social isolation trends. Package this as a premium analytics dashboard for care managers and sell it as a clinical decision-support upgrade.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">🇸🇪</span>
+        <h3>Sweden Market Entry</h3>
+        <p>Expand into Sweden as the first international market — similar welfare model, large elderly care sector (85,000+ institutional care residents), and strong appetite for health tech innovation. Partner with a Swedish distributor or care chain like Ambea or Humana for a lighthouse pilot project. Leverage 50+ language support for immediate Swedish-language deployment.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">🔗</span>
+        <h3>Care System Integrations</h3>
+        <p>Build API integrations with major Nordic care management platforms (Hilkka, Lifecare, TietoEVRY wellness) so Qluve data flows directly into existing documentation workflows. This reduces caregiver documentation burden, makes Qluve indispensable to daily operations, and dramatically increases switching costs once deployed.</p>
+      </div>
+
+      <div class="feature-card" style="background: linear-gradient(135deg, var(--primary-light) 0%, #fff 100%); border-color: var(--primary);">
+        <span class="feature-icon">🤖</span>
+        <h3>Voice-Powered AI Conversations</h3>
+        <p>Natural, empathetic conversations available 24/7 — reducing loneliness and isolation while gathering continuous wellbeing data. Qluve speaks the resident's language, remembers their preferences, and builds a genuine relationship over time.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="social-proof" id="testimonials">
+  <div style="max-width:1100px; margin:0 auto;">
+    <p class="section-label center" style="color:var(--secondary);">Real Stories</p>
+    <h2 class="section-title center" style="color:var(--white);">Residents and caregivers love Qluve</h2>
+    <p class="section-sub center" style="color:rgba(255,255,255,0.6);">From pilot facilities across Finland, the feedback speaks for itself.</p>
+    <div class="testimonials">
+
+      <div class="testimonial">
+        <div class="quote-mark">"</div>
+        <p>Qluve noticed that Mrs. K had been quieter than usual for three days. It flagged the mood change and we discovered she was in pain but hadn't wanted to bother us. That early alert made all the difference.</p>
+        <div class="testimonial-author">
+          <strong>Head Nurse, Myllykaari Care Home</strong>
+          <span>Helsinki, Finland</span>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="quote-mark">"</div>
+        <p>Our residents who rarely spoke to anyone now chat with Qluve every morning. One gentleman told me it was the first time he'd had a proper conversation in weeks. The loneliness reduction alone justifies the investment.</p>
+        <div class="testimonial-author">
+          <strong>Care Director, ViisSeiska</strong>
+          <span>Tampere, Finland</span>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="quote-mark">"</div>
+        <p>As a daughter living abroad, the family portal gives me real peace of mind. I can see my mother's wellbeing trends and send her voice messages. She lights up when she hears my voice through Qluve.</p>
+        <div class="testimonial-author">
+          <strong>Family Member of Resident</strong>
+          <span>Espoo, Finland</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA BOTTOM -->
+<section class="cta-section" id="signup">
+  <div class="cta-box">
+    <p class="section-label center">Get Started</p>
+    <h2 class="section-title">Ready to bring Qluve to your care home?</h2>
+    <p class="section-sub center">Join forward-thinking care operators across Finland. Book a pilot, see results in weeks.</p>
+    <form class="cta-form">
+      <input type="email" placeholder="Your work email address" required>
+      <button type="submit">Request a Demo</button>
+    </form>
+    <p class="cta-sub-note">🔒 GDPR compliant &nbsp;·&nbsp; No credit card needed &nbsp;·&nbsp; Pilot in 30 days</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Ql<span>u</span>ve</div>
+  <p>AI companion that talks, listens, and cares for your residents</p>
+  <p style="margin-top:0.75rem; margin-bottom:0.75rem;">
+    <a href="mailto:hello@qluve.com">hello@qluve.com</a>
+    &nbsp;·&nbsp;
+    <a href="#">Privacy Policy</a>
+    &nbsp;·&nbsp;
+    <a href="#">Terms of Service</a>
+  </p>
+  <p>&copy; <span class="year"></span> Qluve. All rights reserved. Deployed in Finland 🇫🇮</p>
+  <p style="margin-top:0.75rem;">
+    Powered by <a href="https://madmantra.com" target="_blank" rel="noopener noreferrer">MadMantra</a>
+  </p>
+</footer>
+
+<script>
+  document.querySelectorAll('form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var email = form.querySelector('input[type="email"]').value;
+      fetch('https://api.madmantra.app/api/landing/qluve/signup', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email})
+      }).then(function() {
+        form.innerHTML = '<p style="padding:12px;color:green;font-weight:600">Thanks! We will be in touch.</p>';
+      });
+    });
+  });
+</script>
+<script>document.querySelectorAll('.year').forEach(e=>e.textContent=new Date().getFullYear())</script>
+</body>
+</html>
